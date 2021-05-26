@@ -1,0 +1,86 @@
+body{
+    margin : 0 ; 
+    padding: 0 ;
+    width: 100%;
+    background-color:rgba(9, 47, 70, 0.7)
+}
+#header{
+width: 95%;
+height:300px;
+/* margin: 20px 20px 20px 20px; */
+margin: auto;
+margin-top: 10px;
+background-image: url(images/header.jpg);
+background-position: center;
+background-size: cover;
+}
+#search{
+width: 150px;
+height: 30px;
+margin-top: 4px;
+margin-left: 4px;
+background: rgba(223, 206, 206, 0.5);
+transition: all .5s;
+}
+#search::placeholder {
+    color: white
+}
+#search:hover{
+    background: rgba(246, 246, 246, 0.8);
+    width: 200px;
+    border-radius: 8px;
+}
+#searchBtn{
+    height: 30px;
+    background: rgba(223, 206, 206, 0.5);
+    border-radius: 4px;
+    color: white;
+    transition: all .5s;
+}
+#searchBtn:hover{
+border-radius: 8px;
+background: rgba(241, 233, 233, 0.8);
+color:rgb(114, 109, 109)
+}
+
+#content{
+    display: flex;
+    width: 90%;
+    justify-content: space-around;
+    /* align-items: flex-start; */
+     align-items: stretch;
+    flex-wrap: wrap;
+    margin: auto;
+    margin-top: 50px;
+}
+.searchedContent {
+    display: flex;
+    width: 90%;
+    justify-content: space-around;
+    /* align-items: flex-start; */
+    align-items: stretch;
+    flex-wrap: wrap;
+    margin: auto;
+    margin-top: 50px;
+}
+.cardH5{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* ===== cards */ 
+.cardContainer {
+    width: 18rem;
+    background-color: yellowgreen;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+   
+    margin-bottom: 20px;
+    border-radius: 10px;
+    transition: all 1s 1s;
+}
+
+.cardImg{
+    border-radius: 10px;
+}
