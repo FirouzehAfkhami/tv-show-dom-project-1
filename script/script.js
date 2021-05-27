@@ -6,8 +6,7 @@ function makeContent() {
 }
 makeContent();
 
-
-
+// this function get three arguments and make one card
 function makeCard(url, title, summary) {
   //making the container div
   const container = document.createElement("div");
@@ -22,13 +21,13 @@ function makeCard(url, title, summary) {
   container.appendChild(cardImg);
   //making card body
   const cardBody = document.createElement("div");
-  cardBody.classList.add('card-body');
+  cardBody.classList.add("card-body");
   container.appendChild(cardBody);
   //making the h5
   const cardH5 = document.createElement("h5");
   cardH5.classList.add("card-title");
   cardH5.classList.add("cardH5");
-  cardH5.innerHTML = `<span>Name</span> : ${title}`;
+  cardH5.innerHTML = `<span>Name</span> : ${title}`; //
   cardBody.appendChild(cardH5);
   //making the paragraph
   const cardPara = document.createElement("p");
@@ -36,17 +35,25 @@ function makeCard(url, title, summary) {
   cardPara.innerHTML = `summary : ${summary}`;
   cardBody.appendChild(cardPara);
 
+  // returning the container that have the card
   return container;
 }
 
-//this code will iterate through the api and will make card for each movie
+//this code will fetch the api url, iterate through the api and will make card for each movie
 const api = fetch("https://api.tvmaze.com/shows/82/episodes")
   .then((res) => {
     return res.json();
   })
   .then((films) => {
     for (let film of films) {
-      let title = film.name;
+      //making the episode number in a specific format like 'S01E09'
+      let episode = film.number;
+      let episodeString = `0${episode}`;
+      if (episode > 10) {
+        episodeString = `${episode}`;
+      }
+      let title = `${film.name} - S0${film.season}E${episodeString}`;
+
       let url = film.image.medium;
       let summary = film.summary;
       makeCard(url, title, summary);
@@ -55,70 +62,23 @@ const api = fetch("https://api.tvmaze.com/shows/82/episodes")
 
 //getting search input and the button
 const search = document.getElementById("search");
-const searchBtn = document.querySelector("#searchBtn");
-console.log(search);
-console.log(searchBtn);
 
-
-
-
-
-
-//adding an event listener for the search and btn
-// searchBtn.addEventListener("click", (e) => {
-//   e.preventDefault();
-//   console.log(search.value);
-//   content.remove();
-//   // const api = fetch("https://api.tvmaze.com/shows/82/episodes")
-//   //   .then((res) => {
-//   //     return res.json();
-//   //   })
-//   const api = getApi()
-//   const promisee = new Promise((resolve , reject) => (){
-
-//   })
-//     //iterating through the episodes and creating an array that have the word that searched in
-//     //the search input
-//     .then((films) => {
-//       let searched = [];
-//       for (let film of films) {
-//         let title = film.name;
-//         let regex = new RegExp(search.value, "i");
-//         if (regex.test(title)) {
-//           searched.push(film);
-//         }
-//       }
-//       return searched;
-//     })
-//     //creating new cards depend on the search value
-//     .then((searched) => {
-//       console.log(searched);
-//       makeContent();
-//       for (let film of searched) {
-//         let title = film.name;
-//         let url = film.image.medium;
-//         let summary = film.summary;
-//         makeCard(url, title, summary);
-//       }
-//     });
-// });
-
-
-
-search.addEventListener("keyup", (e) => {
-  // e.preventDefault();
-  
-   console.log(search.value);
+//adding a keyup event listener for the input to search
+search.addEventListener("keyup", () => {
+  //removing the cards so that i can replace them with new cards (searched cars)
   content.remove();
 
-  //getting the series api from the function
+  //getting the series api from the function getApi
   const api = getApi();
   let searched = [];
+
   //iterating through the function for searching the value
   for (let film of api) {
     let title = film.name;
     let summary = film.summary;
 
+    // concating the title and the summary into one string so the regex can be
+    //performed of both of them
     let searchedText = title.concat(summary);
     let regex = new RegExp(search.value, "i");
     if (regex.test(searchedText)) {
@@ -135,15 +95,93 @@ search.addEventListener("keyup", (e) => {
     makeCard(url, title, summary);
   }
 
+  //making the search matches string for showing how many episodes is being desplayed on the
+  //screen right now
+  const searchMatches = document.getElementById("searchMathes");
+  const remainCards = document.getElementById("content").childNodes.length;
+  //replacing the format into the span tag
+  searchMatches.innerHTML = `displaying ${remainCards}/73 episodes`;
+});
 
+
+//getting the selector in the html file
+const episodeSelector = document.getElementById("episodeSelector");
+const episodes = getApi();
+
+// adding the the options to the selector
+for (let film of episodes) {
+
+  //making the episode number in a specific format like 'S01E09'
+  let episode = film.number;
+  let episodeString = `0${episode}`;
+  if (episode > 10) {
+    episodeString = `${episode}`;
+  }
+
+  //i also added the value of the options. in this case any options has the exact value of the
+  //the episode's name. later i will iterate through the api and when the selected option's value
+  //was equal to any of the episodes, that episod's card will be made right away :D
+  let title = `<option value="${film.id}">S0${film.season}E${episodeString} - ${film.name}</option>`;
+  episodeSelector.innerHTML += title;
+
+}
+
+
+//adding an event listener for the selector
+episodeSelector.addEventListener("change", () => {
+  //any time you select the whole cards will be deleted and a new content div will be made
+ content.remove();
+  makeContent();
+
+
+  // this if statment will be executed when the all episodes option selected and will 
+  //fetch the whole api again and append it to the page
+  if (episodeSelector.value === "all") {
+    const api = fetch("https://api.tvmaze.com/shows/82/episodes")
+    .then((res) => {
+      return res.json();
+  })
+  .then((films) => {
+    for (let film of films) {
+      //making the episode number in a specific format like 'S01E09'
+      let episode = film.number;
+      let episodeString = `0${episode}`;
+      if (episode > 10) {
+        episodeString = `${episode}`;
+      }
+      let title = `${film.name} - S0${film.season}E${episodeString}`;
+      
+      let url = film.image.medium;
+      let summary = film.summary;
+      makeCard(url, title, summary);
+    }
+  });
+}
+
+
+//getting the api from the function to iterate among it 
+const films = getApi();
+
+//this for...of statement is going to be executed when the last if statment didnt work
+//it will search among the api and when the id of the selected movie was equal to the film
+//it will make that film's card
+for (let film of films) {
+    if (film.id == episodeSelector.value) {
+      let title = film.name;
+      let url = film.image.medium;
+      let summary = film.summary;
+
+       makeCard(url, title, summary);
+    }
+  }
 });
 
 
 
 
-
-// console.log(getApi());
-function getApi(){
+// i used this function to get the api so that the server wont block me because of the
+//heavy requests
+function getApi() {
   return [
     {
       id: 4952,

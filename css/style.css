@@ -63,6 +63,10 @@ color:rgb(114, 109, 109)
     margin: auto;
     margin-top: 50px;
 }
+.search-matches{
+    color : rgb(224, 194, 194);
+    font-size:20px;
+}
 .cardH5{
     font-size: 20px;
     font-weight: bold;
