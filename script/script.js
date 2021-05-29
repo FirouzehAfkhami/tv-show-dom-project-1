@@ -7,33 +7,91 @@ function makeContent() {
 makeContent();
 
 // this function get three arguments and make one card
-function makeCard(url, title, summary) {
+function makeCard(url, title, summary, airTime, link) {
   //making the container div
   const container = document.createElement("div");
-  container.classList.add("card");
   container.classList.add("cardContainer");
   content.appendChild(container);
-  // making the img
-  const cardImg = document.createElement("img");
-  cardImg.src = url;
-  cardImg.classList.add("card-img-top");
-  cardImg.classList.add("cardImg");
-  container.appendChild(cardImg);
-  //making card body
-  const cardBody = document.createElement("div");
-  cardBody.classList.add("card-body");
-  container.appendChild(cardBody);
-  //making the h5
-  const cardH5 = document.createElement("h5");
-  cardH5.classList.add("card-title");
-  cardH5.classList.add("cardH5");
-  cardH5.innerHTML = `<span>Name</span> : ${title}`; //
-  cardBody.appendChild(cardH5);
-  //making the paragraph
-  const cardPara = document.createElement("p");
-  cardPara.classList.add("card-text");
-  cardPara.innerHTML = `summary : ${summary}`;
-  cardBody.appendChild(cardPara);
+  //making single card
+  const singleCard = document.createElement("div");
+  singleCard.classList.add("singleCard");
+  container.appendChild(singleCard);
+
+  //making the cardImg div
+  const cardImageDiv = document.createElement("div");
+  cardImageDiv.classList.add("cardImageDiv");
+  singleCard.appendChild(cardImageDiv);
+  //making the cardimagediv img
+  const cardImage = document.createElement("img");
+  cardImage.src = url;
+  cardImageDiv.appendChild(cardImage);
+  //making the gradient overlay
+  const overlay = document.createElement("div");
+  overlay.classList.add("overlay");
+  cardImageDiv.appendChild(overlay);
+
+  //making the summary div
+  const summaryy = document.createElement("div");
+  summaryy.classList.add("summary");
+  //inserting the summary paragraph
+  const summaryPara = document.createElement("p");
+  summaryPara.innerHTML = `${summary}`;
+  summaryy.appendChild(summaryPara);
+
+  cardImageDiv.appendChild(summaryy);
+
+  //making the name div
+  const cardName = document.createElement("div");
+  cardName.classList.add("cardName");
+  singleCard.appendChild(cardName);
+
+  //inserting the name into cardname
+  const cardNamePara = document.createElement("p");
+  cardNamePara.innerHTML = `${title}`;
+  cardName.appendChild(cardNamePara);
+
+  //making the footer div
+  const cardFooter = document.createElement("div");
+  cardFooter.classList.add("cardFooter");
+  singleCard.appendChild(cardFooter);
+
+  //making the play icon div
+  const play = document.createElement("div");
+  play.classList.add("play1");
+  cardFooter.appendChild(play);
+
+  const playIcon = document.createElement("div");
+  playIcon.innerHTML = `<i class="fa fa-play-circle" aria-hidden="true"></i>`;
+  play.appendChild(playIcon);
+
+  const playLink = document.createElement("div");
+  playLink.classList.add("link");
+  const playLinkAddress = document.createElement("a");
+  playLinkAddress.href = `${link}`;
+  playLinkAddress.target = "_blank";
+  playLinkAddress.innerHTML = `Wanna Watch?`;
+  playLink.appendChild(playLinkAddress);
+
+  play.appendChild(playLink);
+
+  //making the clock icon div
+  const clock = document.createElement("div");
+  clock.classList.add("clock");
+  cardFooter.appendChild(clock);
+
+  const clockIcon = document.createElement("div");
+  clockIcon.innerHTML = `<i class="fa fa-clock-o" aria-hidden="true"></i>`;
+  clock.appendChild(clockIcon);
+
+  const time = document.createElement("div");
+  time.classList.add("time");
+  clock.appendChild(time);
+
+  const airtime = document.createElement("p");
+  airtime.innerHTML =
+    `<b><i>airtime:        </i></b>` + "   " + `<b><i>${airTime} </i></b>`;
+  time.appendChild(airtime);
+  clock.appendChild(time);
 
   // returning the container that have the card
   return container;
@@ -53,10 +111,11 @@ const api = fetch("https://api.tvmaze.com/shows/82/episodes")
         episodeString = `${episode}`;
       }
       let title = `${film.name} - S0${film.season}E${episodeString}`;
-
+      let airTime = film.airtime;
+      let link = film.url;
       let url = film.image.medium;
       let summary = film.summary;
-      makeCard(url, title, summary);
+      makeCard(url, title, summary, airTime, link);
     }
   });
 
@@ -92,7 +151,9 @@ search.addEventListener("keyup", () => {
     let title = film.name;
     let url = film.image.medium;
     let summary = film.summary;
-    makeCard(url, title, summary);
+     let airTime = film.airtime;
+     let link = film.url;
+    makeCard(url, title, summary, airTime, link);
   }
 
   //making the search matches string for showing how many episodes is being desplayed on the
@@ -103,14 +164,12 @@ search.addEventListener("keyup", () => {
   searchMatches.innerHTML = `displaying ${remainCards}/73 episodes`;
 });
 
-
 //getting the selector in the html file
 const episodeSelector = document.getElementById("episodeSelector");
 const episodes = getApi();
 
 // adding the the options to the selector
 for (let film of episodes) {
-
   //making the episode number in a specific format like 'S01E09'
   let episode = film.number;
   let episodeString = `0${episode}`;
@@ -123,61 +182,56 @@ for (let film of episodes) {
   //was equal to any of the episodes, that episod's card will be made right away :D
   let title = `<option value="${film.id}">S0${film.season}E${episodeString} - ${film.name}</option>`;
   episodeSelector.innerHTML += title;
-
 }
-
 
 //adding an event listener for the selector
 episodeSelector.addEventListener("change", () => {
   //any time you select the whole cards will be deleted and a new content div will be made
- content.remove();
+  content.remove();
   makeContent();
 
-
-  // this if statment will be executed when the all episodes option selected and will 
+  // this if statment will be executed when the all episodes option selected and will
   //fetch the whole api again and append it to the page
   if (episodeSelector.value === "all") {
     const api = fetch("https://api.tvmaze.com/shows/82/episodes")
-    .then((res) => {
-      return res.json();
-  })
-  .then((films) => {
-    for (let film of films) {
-      //making the episode number in a specific format like 'S01E09'
-      let episode = film.number;
-      let episodeString = `0${episode}`;
-      if (episode > 10) {
-        episodeString = `${episode}`;
-      }
-      let title = `${film.name} - S0${film.season}E${episodeString}`;
-      
-      let url = film.image.medium;
-      let summary = film.summary;
-      makeCard(url, title, summary);
-    }
-  });
-}
+      .then((res) => {
+        return res.json();
+      })
+      .then((films) => {
+        for (let film of films) {
+          //making the episode number in a specific format like 'S01E09'
+          let episode = film.number;
+          let episodeString = `0${episode}`;
+          if (episode > 10) {
+            episodeString = `${episode}`;
+          }
+          let title = `${film.name} - S0${film.season}E${episodeString}`;
+          let airTime = film.airtime;
+          let link = film.url;
+          let url = film.image.medium;
+          let summary = film.summary;
+          makeCard(url, title, summary, airTime, link);
+        }
+      });
+  }
 
+  //getting the api from the function to iterate among it
+  const films = getApi();
 
-//getting the api from the function to iterate among it 
-const films = getApi();
-
-//this for...of statement is going to be executed when the last if statment didnt work
-//it will search among the api and when the id of the selected movie was equal to the film
-//it will make that film's card
-for (let film of films) {
+  //this for...of statement is going to be executed when the last if statment didnt work
+  //it will search among the api and when the id of the selected movie was equal to the film
+  //it will make that film's card
+  for (let film of films) {
     if (film.id == episodeSelector.value) {
       let title = film.name;
       let url = film.image.medium;
       let summary = film.summary;
-
-       makeCard(url, title, summary);
+      let airTime = film.airtime;
+      let link = film.url;
+      makeCard(url, title, summary, airTime, link);
     }
   }
 });
-
-
-
 
 // i used this function to get the api so that the server wont block me because of the
 //heavy requests
