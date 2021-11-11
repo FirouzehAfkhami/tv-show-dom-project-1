@@ -218,7 +218,7 @@ episodeSelector.addEventListener("change", () => {
   //getting the api from the function to iterate among it
   const films = getApi();
 
-  //this for...of statement is going to be executed when the last if statment didnt work
+  //this for...of statement is going to be executed when the last if statement didn't work
   //it will search among the api and when the id of the selected movie was equal to the film
   //it will make that film's card
   for (let film of films) {

@@ -87,7 +87,7 @@ height:40px;
 /* ===== cards */ 
 
 .cardContainer {
-   width: 30%;
+   width:400px;
 display: flex;
 flex-wrap: wrap;
 justify-content: space-around;
