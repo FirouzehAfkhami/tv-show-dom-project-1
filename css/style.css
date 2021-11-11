@@ -145,7 +145,8 @@ margin: auto;
 
 .summary p {
     color: white;
-    font-size: 1.1vw;
+    font-size: 0.75rem;
+    
 }
 
 .cardImageDiv:hover .summary {
